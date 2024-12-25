@@ -42,7 +42,7 @@ export default function RootLayout({
     return (
         <html lang="en" suppressHydrationWarning>
             <body
-                className={`${DepartureMono.variable} ${GeistSans.variable} ${GeistMono.variable} antialiased`}
+                className={`${DepartureMono.variable} ${GeistSans.variable} ${GeistMono.variable} antialiased dark`}
             >
                 <ThemeProvider
                     attribute="class"
