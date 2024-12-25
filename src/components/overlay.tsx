@@ -17,7 +17,7 @@ export default function Overlay({}) {
                 Inspired by Joshua Guo
             </Link>
             <Link
-                href="https://twitter.com/paolojnn"
+                href="https://twitter.com/PaoloJNN"
                 className="flex text-center text-sm font-departure absolute bottom-0 right-0 m-5 pointer-events-auto"
             >
                 Built by PaoloJN 💝

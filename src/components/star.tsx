@@ -2,9 +2,10 @@
 
 import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
+import * as THREE from "three";
 
 export default function Star() {
-    const pointsRef = useRef(null);
+    const pointsRef = useRef<THREE.Points>(null);
 
     // Generate vertices and outer face points for the Pentagrammic Dipyramid
     const vertices = useMemo(() => {
@@ -40,7 +41,7 @@ export default function Star() {
         }
 
         // Generate particles for the outer surface of each face
-        const particlePositions = [];
+        const particlePositions: number[] = [];
         const resolution = 10; // Number of particles along each edge
 
         faces.forEach((face) => {
@@ -68,11 +69,11 @@ export default function Star() {
     }, []);
 
     // Animate star spinning
-    // useFrame(({ clock }) => {
-    //     if (pointsRef.current) {
-    //         pointsRef.current.rotation.y = clock.getElapsedTime() * 2;
-    //     }
-    // });
+    useFrame(({ clock }) => {
+        if (pointsRef.current) {
+            pointsRef.current.rotation.y = clock.getElapsedTime() * 2;
+        }
+    });
 
     return (
         <points ref={pointsRef} position={[0, 2.35, 0]} rotation={[0, 0, Math.PI / 2]}>

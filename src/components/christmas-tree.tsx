@@ -3,6 +3,7 @@
 import { PointMaterial } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
+import * as THREE from "three";
 
 import Star from "@/components/star";
 
@@ -26,8 +27,8 @@ interface ConeProps {
 }
 
 function Cone({ height, baseRadius, particleCount, yOffset }: ConeProps) {
-    const particleRef = useRef(null);
-    const decorationRef = useRef([]);
+    const particleRef = useRef<THREE.Points>(null);
+    const decorationRef = useRef<(THREE.Mesh | null)[]>([]);
 
     const { positions, basePositions, initialOffsets, decorationPositions, decorationOffsets } =
         useMemo(() => {
@@ -74,48 +75,50 @@ function Cone({ height, baseRadius, particleCount, yOffset }: ConeProps) {
             };
         }, [height, baseRadius, particleCount, yOffset]);
 
-    // useFrame(({ clock }) => {
-    //     const elapsed = clock.getElapsedTime();
-    //     const waveAmplitude = 0.1; // Amplitude of the up-and-down wave
-    //     const waveFrequency = 1; // Frequency of the wave
-    //     const spinSpeed = 1; // Speed of the spinning
+    useFrame(({ clock }) => {
+        const elapsed = clock.getElapsedTime();
+        const waveAmplitude = 0.1; // Amplitude of the up-and-down wave
+        const waveFrequency = 1; // Frequency of the wave
+        const spinSpeed = 1; // Speed of the spinning
 
-    //     if (!particleRef.current) return;
+        if (!particleRef.current) return;
 
-    //     const positionArray = particleRef.current.geometry.attributes.position.array;
+        const positionArray = particleRef.current.geometry.attributes.position.array;
 
-    //     for (let i = 0; i < basePositions.length / 3; i++) {
-    //         const index = i * 3; // Each particle has x, y, z
-    //         const initialOffset = initialOffsets[i];
+        for (let i = 0; i < basePositions.length / 3; i++) {
+            const index = i * 3; // Each particle has x, y, z
+            const initialOffset = initialOffsets[i];
 
-    //         // Adjust vertical position with wave
-    //         positionArray[index + 1] =
-    //             basePositions[index + 1] +
-    //             Math.sin(elapsed * waveFrequency + initialOffset) * waveAmplitude;
+            // Adjust vertical position with wave
+            positionArray[index + 1] =
+                basePositions[index + 1] +
+                Math.sin(elapsed * waveFrequency + initialOffset) * waveAmplitude;
 
-    //         // Apply spin to x and z
-    //         const baseX = basePositions[index];
-    //         const baseZ = basePositions[index + 2];
-    //         const angle = elapsed * spinSpeed + initialOffset;
-    //         positionArray[index] = baseX * Math.cos(angle) - baseZ * Math.sin(angle);
-    //         positionArray[index + 2] = baseX * Math.sin(angle) + baseZ * Math.cos(angle);
-    //     }
+            // Apply spin to x and z
+            const baseX = basePositions[index];
+            const baseZ = basePositions[index + 2];
+            const angle = elapsed * spinSpeed + initialOffset;
+            positionArray[index] = baseX * Math.cos(angle) - baseZ * Math.sin(angle);
+            positionArray[index + 2] = baseX * Math.sin(angle) + baseZ * Math.cos(angle);
+        }
 
-    //     particleRef.current.geometry.attributes.position.needsUpdate = true;
+        particleRef.current.geometry.attributes.position.needsUpdate = true;
 
-    //     // Update decoration positions to spin with the tree
-    //     decorationRef.current.forEach((mesh, index) => {
-    //         const { initialAngle, progress } = decorationOffsets[index];
-    //         const y = basePositions[index * 3 + 1];
-    //         const radius = baseRadius * (1 - progress);
-    //         const angle = elapsed * spinSpeed + initialAngle;
+        // Update decoration positions to spin with the tree
+        decorationRef.current.forEach((mesh, index) => {
+            const { initialAngle, progress } = decorationOffsets[index];
+            const y = basePositions[index * 3 + 1];
+            const radius = baseRadius * (1 - progress);
+            const angle = elapsed * spinSpeed + initialAngle;
 
-    //         const x = radius * Math.cos(angle);
-    //         const z = radius * Math.sin(angle);
+            const x = radius * Math.cos(angle);
+            const z = radius * Math.sin(angle);
 
-    //         mesh.position.set(x, y, z);
-    //     });
-    // });
+            if (mesh) {
+                mesh.position.set(x, y, z);
+            }
+        });
+    });
 
     return (
         <>
